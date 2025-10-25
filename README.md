@@ -3,9 +3,7 @@
 Herramienta web para calcular líquidos IV y evaluar signos de alarma en pacientes con dengue según criterios OPS (Organización Panamericana de la Salud).
 
 ## 🚀 Acceso rápido
-[Abrir calculadora](https://tu-usuario.github.io/Calculadora-Dengue-IV/)
-
-> **Nota:** Después de desplegar, reemplaza `tu-usuario` con tu nombre de usuario de GitHub.
+[Abrir calculadora](https://palmeiroresearch.github.io/Calculadora_Liquidos/)
 
 ## 📋 Características principales
 
