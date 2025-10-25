@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Líquidos IV - Dengue</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0891b2">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: #164e63;
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 15px;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card h2 {
+            color: #164e63;
+            margin-bottom: 20px;
+            font-size: 22px;
+            border-bottom: 3px solid #0891b2;
+            padding-bottom: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #164e63;
+            font-size: 14px;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #0891b2;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(8, 145, 178, 0.2);
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .input-row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+        }
+
+        .result-box {
+            background: linear-gradient(135deg, #ecfeff 0%, #cffafe 100%);
+            border: 2px solid #0891b2;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .result-box.show {
+            display: block;
+        }
+
+        .result-box h3 {
+            color: #164e63;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .dose-display {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .dose-display strong {
+            color: #0891b2;
+        }
+
+        .warning-box {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .warning-box.show {
+            display: block;
+        }
+
+        .warning-box strong {
+            color: #b45309;
+        }
+
+        .error-box {
+            background: #fee2e2;
+            border: 2px solid #ef4444;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .error-box.show {
+            display: block;
+        }
+
+        .error-box strong {
+            color: #dc2626;
+        }
+
+        .bolo-section {
+            background: #fff7ed;
+            border: 2px solid #fb923c;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .bolo-toggle {
+            background: #fb923c;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .bolo-toggle:hover {
+            background: #f97316;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(251, 146, 60, 0.3);
+        }
+
+        .bolo-toggle .arrow {
+            transition: transform 0.3s ease;
+        }
+
+        .bolo-toggle.active .arrow {
+            transform: rotate(90deg);
+        }
+
+        .bolo-content {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .bolo-content.show {
+            display: block;
+        }
+
+        .checkbox-group {
+            margin-bottom: 15px;
+        }
+
+        .checkbox-item {
+            background: #f9fafb;
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border: 2px solid #e5e7eb;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .checkbox-item:hover {
+            background: #f3f4f6;
+            border-color: #d1d5db;
+        }
+
+        .checkbox-item.checked {
+            background: #ecfeff;
+            border-color: #0891b2;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .checkbox-item label {
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .hcto-options {
+            background: #f0f9ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border: 2px solid #bae6fd;
+        }
+
+        .hcto-options h4 {
+            color: #164e63;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .radio-group {
+            margin-bottom: 15px;
+        }
+
+        .radio-item {
+            margin-bottom: 10px;
+        }
+
+        .radio-item input[type="radio"] {
+            margin-right: 8px;
+        }
+
+        .evaluation-result {
+            background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+            border: 2px solid #ec4899;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .evaluation-result.show {
+            display: block;
+        }
+
+        .evaluation-result h3 {
+            color: #831843;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .phase-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .phase-normal {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .phase-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .phase-danger {
+            background: #fecaca;
+            color: #991b1b;
+        }
+
+        .phase-critical {
+            background: #fce7f3;
+            color: #831843;
+        }
+
+        .recommendation-box {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        .recommendation-box ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .recommendation-box li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .footer {
+            background: #164e63;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 20px;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .offline-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: none;
+            z-index: 10000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .offline-indicator.offline {
+            background: #f59e0b;
+            display: block;
+        }
+
+        @media (max-width: 968px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .input-row {
+                grid-template-columns: 1fr;
+            }
+
+            .input-row-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            body {
+                padding: 10px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+        }
+
+        /* Utility classes */
+        .mt-1 { margin-top: 10px; }
+        .mt-2 { margin-top: 20px; }
+        .mb-1 { margin-bottom: 10px; }
+        .mb-2 { margin-bottom: 20px; }
+        .text-small { font-size: 13px; }
+        .text-muted { color: #6b7280; }
+    </style>
+</head>
+<body>
+    <div class="offline-indicator" id="offlineIndicator">
+        📱 Modo offline activo
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>💧 Calculadora Líquidos IV - Dengue</h1>
+            <p>Manejo según criterios OPS | Herramienta para práctica clínica</p>
+        </div>
+
+        <div class="main-layout">
+            <!-- COLUMNA IZQUIERDA: CALCULADORA -->
+            <div>
+                <div class="card">
+                    <h2>Calculadora de Líquidos IV</h2>
+                    
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="peso">Peso (kg) *</label>
+                            <input type="number" id="peso" placeholder="Ej: 70" step="0.1" min="1">
+                        </div>
+                        <div class="input-group">
+                            <label for="talla">Talla (cm) <span class="text-small text-muted">(opcional)</span></label>
+                            <input type="number" id="talla" placeholder="Ej: 170" step="1" min="50">
+                        </div>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="velocidad">Velocidad (ml/kg/h) *</label>
+                            <input type="number" id="velocidad" placeholder="Máx: 19.9" step="0.1" min="0.1" max="19.9">
+                        </div>
+                        <div class="input-group">
+                            <label for="duracion">Duración (horas) *</label>
+                            <input type="number" id="duracion" placeholder="Ej: 4" step="0.5" min="0.5">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="tipoGoteo">Tipo de goteo</label>
+                        <select id="tipoGoteo">
+                            <option value="20">Normogotero (20 gotas/ml)</option>
+                            <option value="10">Macrogotero (10 gotas/ml)</option>
+                            <option value="60">Microgotero (60 gotas/ml)</option>
+                        </select>
+                    </div>
+
+                    <div class="error-box" id="errorVelocidad">
+                        <strong>⚠️ VELOCIDAD EXCESIVA</strong><br>
+                        Velocidad ≥20 ml/kg/h sugiere SHOCK. Considerar bolo de rescate en lugar de infusión continua.
+                    </div>
+
+                    <div class="warning-box" id="warningLimite">
+                        <strong>⚠️ Límite de volumen excedido</strong><br>
+                        <span id="warningLimiteTexto"></span>
+                    </div>
+
+                    <div class="result-box" id="resultadoCalculo">
+                        <h3>📋 Indicación calculada</h3>
+                        <div class="dose-display" id="indicacionTexto"></div>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN DE BOLOS -->
+                <div class="card mt-2">
+                    <button class="bolo-toggle" id="boloToggle">
+                        <span class="arrow">▶</span>
+                        <span>Calculadora Bolo de Rescate</span>
+                    </button>
+                    
+                    <div class="bolo-content" id="boloContent">
+                        <div class="input-row mt-2">
+                            <div class="input-group">
+                                <label for="boloVolumen">Volumen (ml/kg)</label>
+                                <input type="number" id="boloVolumen" placeholder="Típico: 10-20" step="1" min="5" max="20" value="10">
+                            </div>
+                            <div class="input-group">
+                                <label for="boloTiempo">Tiempo (minutos)</label>
+                                <input type="number" id="boloTiempo" placeholder="Típico: 15-30" step="5" min="5" max="60" value="15">
+                            </div>
+                        </div>
+
+                        <div class="result-box" id="resultadoBolo">
+                            <h3>💉 Bolo de rescate</h3>
+                            <div class="dose-display" id="boloTexto"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLUMNA DERECHA: SIGNOS DE ALARMA -->
+            <div>
+                <div class="card">
+                    <h2>🚨 Signos de Alarma OPS</h2>
+                    
+                    <div class="checkbox-group">
+                        <div class="checkbox-item" data-signo="1">
+                            <input type="checkbox" id="signo1">
+                            <label for="signo1">Dolor abdominal progresivo hasta ser sostenido e intenso o a la palpación</label>
+                        </div>
+                        <div class="checkbox-item" data-signo="2">
+                            <input type="checkbox" id="signo2">
+                            <label for="signo2">Vómitos persistentes (≥3 en 1h o ≥4 en 6h)</label>
+                        </div>
+                        <div class="checkbox-item" data-signo="3">
+                            <input type="checkbox" id="signo3">
+                            <label for="signo3">Sangrado de mucosas (encías, epistaxis, transvaginal, metrorragia, hipermenorrea, hematemesis, hematuria macro)</label>
+                        </div>
+                        <div class="checkbox-item" data-signo="4">
+                            <input type="checkbox" id="signo4">
+                            <label for="signo4">Letargia o irritabilidad</label>
+                        </div>
+                        <div class="checkbox-item" data-signo="5">
+                            <input type="checkbox" id="signo5">
+                            <label for="signo5">Acumulación de líquidos (clínica o imagen)</label>
+                        </div>
+                        <div class="checkbox-item" data-signo="6">
+                            <input type="checkbox" id="signo6">
+                            <label for="signo6">Hepatomegalia >2cm de instalación brusca</label>
+                        </div>
+                        <div class="checkbox-item" data-signo="7">
+                            <input type="checkbox" id="signo7">
+                            <label for="signo7">Hipotensión postural</label>
+                        </div>
+                    </div>
+
+                    <div class="hcto-options">
+                        <h4>Hematocrito</h4>
+                        
+                        <div class="input-group">
+                            <label for="hctoActual">Hematocrito actual (%) *</label>
+                            <input type="number" id="hctoActual" placeholder="Ej: 45" step="0.1" min="10" max="70">
+                        </div>
+
+                        <div class="radio-group mt-2">
+                            <div class="radio-item">
+                                <input type="radio" id="opcionA" name="hctoOpcion" value="A" checked>
+                                <label for="opcionA">Tengo Hcto basal</label>
+                            </div>
+                            <div class="input-group mt-1" id="inputOpcionA">
+                                <input type="number" id="hctoBasal" placeholder="Hcto basal (%)" step="0.1" min="10" max="70">
+                            </div>
+
+                            <div class="radio-item mt-2">
+                                <input type="radio" id="opcionB" name="hctoOpcion" value="B">
+                                <label for="opcionB">Tengo Hb basal (estimar Hcto = Hb × 3)</label>
+                            </div>
+                            <div class="input-group mt-1" id="inputOpcionB" style="display: none;">
+                                <input type="number" id="hbBasal" placeholder="Hb basal (g/dL)" step="0.1" min="3" max="25">
+                            </div>
+
+                            <div class="radio-item mt-2">
+                                <input type="radio" id="opcionC" name="hctoOpcion" value="C">
+                                <label for="opcionC">Usar valores de referencia (edad/sexo)</label>
+                            </div>
+                            <div class="input-row mt-1" id="inputOpcionC" style="display: none;">
+                                <div class="input-group">
+                                    <input type="number" id="edad" placeholder="Edad (años)" step="1" min="1" max="120">
+                                </div>
+                                <div class="input-group">
+                                    <select id="sexo">
+                                        <option value="">Sexo</option>
+                                        <option value="M">Masculino</option>
+                                        <option value="F">Femenino</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="evaluation-result" id="evaluacionResultado">
+                        <h3>📊 Evaluación</h3>
+                        <div id="evaluacionContenido"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <strong>⚠️ Herramienta de apoyo clínico</strong><br>
+            Basado en criterios OPS para manejo de dengue. Validar con protocolos institucionales y criterio médico.
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let pesoGlobal = 0;
+
+        // Elementos del DOM
+        const pesoInput = document.getElementById('peso');
+        const tallaInput = document.getElementById('talla');
+        const velocidadInput = document.getElementById('velocidad');
+        const duracionInput = document.getElementById('duracion');
+        const tipoGoteoSelect = document.getElementById('tipoGoteo');
+        const boloVolumenInput = document.getElementById('boloVolumen');
+        const boloTiempoInput = document.getElementById('boloTiempo');
+        const hctoActualInput = document.getElementById('hctoActual');
+        const hctoBasalInput = document.getElementById('hctoBasal');
+        const hbBasalInput = document.getElementById('hbBasal');
+        const edadInput = document.getElementById('edad');
+        const sexoSelect = document.getElementById('sexo');
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', () => {
+            setupEventListeners();
+            updateConnectionStatus();
+        });
+
+        function setupEventListeners() {
+            // Calculadora principal
+            pesoInput.addEventListener('input', calcularLiquidos);
+            tallaInput.addEventListener('input', calcularLiquidos);
+            velocidadInput.addEventListener('input', calcularLiquidos);
+            duracionInput.addEventListener('input', calcularLiquidos);
+            tipoGoteoSelect.addEventListener('change', calcularLiquidos);
+
+            // Bolo toggle
+            document.getElementById('boloToggle').addEventListener('click', toggleBolo);
+
+            // Bolo
+            boloVolumenInput.addEventListener('input', calcularBolo);
+            boloTiempoInput.addEventListener('input', calcularBolo);
+            pesoInput.addEventListener('input', calcularBolo);
+
+            // Checkboxes de signos de alarma
+            for (let i = 1; i <= 7; i++) {
+                const checkbox = document.getElementById(`signo${i}`);
+                const checkboxItem = document.querySelector(`.checkbox-item[data-signo="${i}"]`);
+                
+                checkbox.addEventListener('change', () => {
+                    if (checkbox.checked) {
+                        checkboxItem.classList.add('checked');
+                    } else {
+                        checkboxItem.classList.remove('checked');
+                    }
+                    evaluarSignosAlarma();
+                });
+
+                checkboxItem.addEventListener('click', (e) => {
+                    if (e.target !== checkbox) {
+                        checkbox.checked = !checkbox.checked;
+                        checkbox.dispatchEvent(new Event('change'));
+                    }
+                });
+            }
+
+            // Opciones de hematocrito
+            document.querySelectorAll('input[name="hctoOpcion"]').forEach(radio => {
+                radio.addEventListener('change', toggleHctoOptions);
+            });
+
+            // Hematocrito
+            hctoActualInput.addEventListener('input', evaluarSignosAlarma);
+            hctoBasalInput.addEventListener('input', evaluarSignosAlarma);
+            hbBasalInput.addEventListener('input', evaluarSignosAlarma);
+            edadInput.addEventListener('input', evaluarSignosAlarma);
+            sexoSelect.addEventListener('change', evaluarSignosAlarma);
+        }
+
+        function toggleBolo() {
+            const toggle = document.getElementById('boloToggle');
+            const content = document.getElementById('boloContent');
+            
+            toggle.classList.toggle('active');
+            content.classList.toggle('show');
+        }
+
+        function toggleHctoOptions() {
+            const opcion = document.querySelector('input[name="hctoOpcion"]:checked').value;
+            
+            document.getElementById('inputOpcionA').style.display = opcion === 'A' ? 'block' : 'none';
+            document.getElementById('inputOpcionB').style.display = opcion === 'B' ? 'block' : 'none';
+            document.getElementById('inputOpcionC').style.display = opcion === 'C' ? 'grid' : 'none';
+            
+            evaluarSignosAlarma();
+        }
+
+        function calcularLiquidos() {
+            const peso = parseFloat(pesoInput.value);
+            const talla = parseFloat(tallaInput.value);
+            const velocidad = parseFloat(velocidadInput.value);
+            const duracion = parseFloat(duracionInput.value);
+            const gotasPorMl = parseInt(tipoGoteoSelect.value);
+
+            // Guardar peso global
+            pesoGlobal = peso;
+
+            // Limpiar mensajes
+            document.getElementById('errorVelocidad').classList.remove('show');
+            document.getElementById('warningLimite').classList.remove('show');
+            document.getElementById('resultadoCalculo').classList.remove('show');
+
+            // Validaciones básicas
+            if (!peso || !velocidad || !duracion) {
+                return;
+            }
+
+            // Validar velocidad máxima
+            if (velocidad >= 20) {
+                document.getElementById('errorVelocidad').classList.add('show');
+                velocidadInput.value = 19.9;
+                return;
+            }
+
+            // Cálculo del volumen total
+            const volumenTotal = peso * velocidad * duracion;
+
+            // Calcular límite máximo
+            let limiteMax = null;
+            let razonLimite = '';
+
+            if (talla && talla > 0) {
+                // Si hay talla, calcular superficie corporal (Mosteller)
+                const superficieCorporal = Math.sqrt((peso * talla) / 3600);
+                limiteMax = (superficieCorporal * 2000 * duracion) / 24; // 2000 ml/m²/24h
+                razonLimite = `Límite por superficie corporal (${superficieCorporal.toFixed(2)} m²): ${limiteMax.toFixed(0)} ml en ${duracion}h`;
+            } else {
+                // Límites por peso
+                if (peso < 40) {
+                    limiteMax = null; // Sin límite artificial
+                } else if (peso >= 40 && peso <= 70) {
+                    limiteMax = (2500 * duracion) / 4; // Proporcional a 2500ml/4h
+                    razonLimite = `Límite para peso 40-70 kg: ${limiteMax.toFixed(0)} ml en ${duracion}h (2500 ml/4h proporcionalmente)`;
+                } else {
+                    limiteMax = (3000 * duracion) / 4; // Proporcional a 3000ml/4h
+                    razonLimite = `Límite para peso >70 kg: ${limiteMax.toFixed(0)} ml en ${duracion}h (3000 ml/4h proporcionalmente)`;
+                }
+            }
+
+            // Verificar si excede el límite
+            if (limiteMax && volumenTotal > limiteMax) {
+                document.getElementById('warningLimiteTexto').textContent = razonLimite;
+                document.getElementById('warningLimite').classList.add('show');
+            }
+
+            // Cálculo del goteo
+            const gotasPorMinuto = (volumenTotal * gotasPorMl) / (duracion * 60);
+
+            // Calcular número de frascos de 500ml necesarios
+            const frascos = Math.ceil(volumenTotal / 500);
+
+            // Mostrar resultado
+            const tipoGoteoTexto = gotasPorMl === 20 ? 'normogotero' : 
+                                   gotasPorMl === 10 ? 'macrogotero' : 'microgotero';
+
+            document.getElementById('indicacionTexto').innerHTML = `
+                <strong>NaCl 0.9%</strong> (frasco 500ml)<br>
+                Administrar <strong>${volumenTotal.toFixed(1)} ml</strong> a durar <strong>${duracion} horas</strong><br>
+                a razón de <strong>${gotasPorMinuto.toFixed(1)} gotas/min</strong> (${tipoGoteoTexto})<br>
+                <br>
+                <span class="text-muted">Frascos necesarios: ${frascos} × 500ml</span><br>
+                <span class="text-muted">Velocidad: ${velocidad} ml/kg/h × ${peso} kg = ${(velocidad * peso).toFixed(1)} ml/h</span>
+            `;
+
+            document.getElementById('resultadoCalculo').classList.add('show');
+        }
+
+        function calcularBolo() {
+            const peso = parseFloat(pesoInput.value);
+            const volumen = parseFloat(boloVolumenInput.value);
+            const tiempo = parseFloat(boloTiempoInput.value);
+
+            if (!peso || !volumen || !tiempo) {
+                document.getElementById('resultadoBolo').classList.remove('show');
+                return;
+            }
+
+            const volumenTotal = peso * volumen;
+            const gotasPorMl = parseInt(tipoGoteoSelect.value);
+            const gotasPorMinuto = (volumenTotal * gotasPorMl) / tiempo;
+
+            const tipoGoteoTexto = gotasPorMl === 20 ? 'normogotero' : 
+                                   gotasPorMl === 10 ? 'macrogotero' : 'microgotero';
+
+            document.getElementById('boloTexto').innerHTML = `
+                <strong>Bolo de rescate:</strong><br>
+                <strong>NaCl 0.9%</strong><br>
+                Administrar <strong>${volumenTotal.toFixed(1)} ml</strong> en <strong>${tiempo} minutos</strong><br>
+                a razón de <strong>${gotasPorMinuto.toFixed(1)} gotas/min</strong> (${tipoGoteoTexto})<br>
+                <br>
+                <span class="text-muted">Velocidad: ${volumen} ml/kg × ${peso} kg = ${volumenTotal.toFixed(1)} ml</span>
+            `;
+
+            document.getElementById('resultadoBolo').classList.add('show');
+        }
+
+        function evaluarSignosAlarma() {
+            // Contar signos clínicos marcados
+            let signosMarcados = 0;
+            for (let i = 1; i <= 7; i++) {
+                if (document.getElementById(`signo${i}`).checked) {
+                    signosMarcados++;
+                }
+            }
+
+            // Evaluar hematocrito
+            const hctoActual = parseFloat(hctoActualInput.value);
+            let hctoBasal = null;
+            let aumentoHcto = false;
+
+            if (hctoActual) {
+                const opcion = document.querySelector('input[name="hctoOpcion"]:checked').value;
+
+                if (opcion === 'A') {
+                    hctoBasal = parseFloat(hctoBasalInput.value);
+                } else if (opcion === 'B') {
+                    const hb = parseFloat(hbBasalInput.value);
+                    if (hb) {
+                        hctoBasal = hb * 3;
+                    }
+                } else if (opcion === 'C') {
+                    const edad = parseFloat(edadInput.value);
+                    const sexo = sexoSelect.value;
+
+                    if (edad && sexo) {
+                        if (edad >= 1 && edad <= 5) {
+                            hctoBasal = 37;
+                        } else if (edad >= 6 && edad <= 12) {
+                            hctoBasal = 39;
+                        } else if (edad >= 13) {
+                            hctoBasal = sexo === 'M' ? 43 : 39;
+                        }
+                    }
+                }
+
+                // Verificar aumento ≥20%
+                if (hctoBasal) {
+                    const aumento = ((hctoActual - hctoBasal) / hctoBasal) * 100;
+                    if (aumento >= 20) {
+                        aumentoHcto = true;
+                        signosMarcados++; // Contar como signo adicional
+                    }
+                }
+            }
+
+            // Si no hay datos suficientes, no evaluar
+            if (!hctoActual || signosMarcados === 0) {
+                document.getElementById('evaluacionResultado').classList.remove('show');
+                return;
+            }
+
+            // Determinar fase y recomendaciones
+            let fase = '';
+            let badgeClass = '';
+            let recomendaciones = '';
+
+            if (signosMarcados === 0) {
+                fase = 'Fase febril/convalecencia';
+                badgeClass = 'phase-normal';
+                recomendaciones = `
+                    <div class="recommendation-box">
+                        <strong>Recomendaciones:</strong>
+                        <ul>
+                            <li>Hidratación oral abundante</li>
+                            <li>Monitoreo ambulatorio</li>
+                            <li>Vigilar aparición de signos de alarma</li>
+                            <li>Control de Hcto según evolución</li>
+                        </ul>
+                    </div>
+                `;
+            } else if (signosMarcados >= 1 && signosMarcados <= 2) {
+                fase = 'Fase crítica - Inicio';
+                badgeClass = 'phase-warning';
+                recomendaciones = `
+                    <div class="recommendation-box">
+                        <strong>Recomendaciones:</strong>
+                        <ul>
+                            <li>Líquidos IV: <strong>5-7 ml/kg/h</strong></li>
+                            <li>Control de Hcto cada 12 horas</li>
+                            <li>Vigilar diuresis y signos vitales</li>
+                            <li>Hospitalización recomendada</li>
+                        </ul>
+                    </div>
+                `;
+            } else if (signosMarcados >= 3 && signosMarcados <= 4) {
+                fase = 'Fase crítica - Activa';
+                badgeClass = 'phase-danger';
+                recomendaciones = `
+                    <div class="recommendation-box">
+                        <strong>Recomendaciones:</strong>
+                        <ul>
+                            <li>Líquidos IV: <strong>10-15 ml/kg/h</strong></li>
+                            <li>Control de Hcto cada 6 horas</li>
+                            <li>Vigilancia estrecha de TA y diuresis</li>
+                            <li>Balance estricto de líquidos</li>
+                            <li>Considerar traslado a área de mayor complejidad</li>
+                        </ul>
+                    </div>
+                `;
+            } else {
+                fase = 'Fase crítica - Severa/Pre-shock';
+                badgeClass = 'phase-critical';
+                recomendaciones = `
+                    <div class="recommendation-box">
+                        <strong>Recomendaciones:</strong>
+                        <ul>
+                            <li>Líquidos IV: <strong>15-20 ml/kg/h</strong> o bolo de rescate</li>
+                            <li>Control de Hcto cada 2-4 horas</li>
+                            <li>Considerar UCI</li>
+                            <li>Monitoreo invasivo si es necesario</li>
+                            <li>Balance estricto de líquidos</li>
+                            <li>Vigilar sobrecarga hídrica</li>
+                        </ul>
+                    </div>
+                `;
+            }
+
+            // Generar texto sobre hematocrito
+            let hctoTexto = `<strong>Hcto actual:</strong> ${hctoActual}%`;
+            if (hctoBasal) {
+                const aumento = ((hctoActual - hctoBasal) / hctoBasal) * 100;
+                hctoTexto += `<br><strong>Hcto basal:</strong> ${hctoBasal.toFixed(1)}%`;
+                hctoTexto += `<br><strong>Aumento:</strong> ${aumento.toFixed(1)}%`;
+                if (aumentoHcto) {
+                    hctoTexto += ' <span style="color: #dc2626; font-weight: 600;">⚠️ (≥20% = Signo de alarma)</span>';
+                }
+            }
+
+            document.getElementById('evaluacionContenido').innerHTML = `
+                <div class="phase-badge ${badgeClass}">${fase}</div>
+                <div class="dose-display">
+                    <strong>Signos de alarma presentes:</strong> ${signosMarcados}<br>
+                    ${hctoTexto}
+                </div>
+                ${recomendaciones}
+            `;
+
+            document.getElementById('evaluacionResultado').classList.add('show');
+        }
+
+        // Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Service Worker registrado:', reg))
+                    .catch(err => console.log('Error al registrar Service Worker:', err));
+            });
+        }
+
+        // Detector de conexión
+        function updateConnectionStatus() {
+            const indicator = document.getElementById('offlineIndicator');
+            if (navigator.onLine) {
+                indicator.classList.remove('offline');
+            } else {
+                indicator.classList.add('offline');
+            }
+        }
+
+        window.addEventListener('online', updateConnectionStatus);
+        window.addEventListener('offline', updateConnectionStatus);
+    </script>
+</body>
+</html>
